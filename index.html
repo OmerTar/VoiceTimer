@@ -33,7 +33,11 @@
     let timeLeft = 30;
 
     function say(text) {
+      console.log("Speaking:", text);
       const utterance = new SpeechSynthesisUtterance(text);
+      utterance.onend = () => {
+        recognition.start();
+      };
       speechSynthesis.speak(utterance);
     }
 
@@ -42,12 +46,9 @@
     }
 
     function startTimer() {
-
-      // Unlock speech in Chrome
-      speechSynthesis.speak(new SpeechSynthesisUtterance(""));
-
       clearTimeout(timer);
       clearInterval(countdownInterval);
+      recognition.stop();
 
       timeLeft = 30;
       document.getElementById('message').textContent = 'Timer started...';
@@ -62,9 +63,9 @@
       }, 1000);
 
       timer = setTimeout(() => {
-        say('Done');
-        document.getElementById('message').textContent = 'Listening...';
+        document.getElementById('message').textContent = 'Done';
         document.getElementById('countdown').textContent = '';
+        say('Done');
       }, 30000);
     }
 
@@ -77,6 +78,7 @@
 
     recognition.onresult = function(event) {
       const transcript = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
+      console.log('Heard:', transcript);
       if (transcript === 'start') {
         startTimer();
       }
@@ -88,9 +90,11 @@
     };
 
     recognition.onend = function() {
-      recognition.start(); // Restart listening
+      console.log('Speech recognition ended. Restarting...');
+      recognition.start();
     };
 
+    // Start listening right away
     recognition.start();
   </script>
 </body>
