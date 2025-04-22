@@ -42,6 +42,10 @@
     }
 
     function startTimer() {
+
+      // Unlock speech in Chrome
+      speechSynthesis.speak(new SpeechSynthesisUtterance(""));
+
       clearTimeout(timer);
       clearInterval(countdownInterval);
 
