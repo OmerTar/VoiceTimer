@@ -20,10 +20,16 @@
       font-size: 40px;
       color: #333;
     }
+    #enable-voice-btn {
+      font-size: 16px;
+      margin-bottom: 20px;
+      padding: 10px 20px;
+    }
   </style>
 </head>
 <body>
   <h1>Say "Start" to Begin Timer</h1>
+  <button id="enable-voice-btn" onclick="enableVoice()">Enable Voice Output</button>
   <div id="message">Listening...</div>
   <div id="countdown"></div>
 
@@ -31,9 +37,18 @@
     let timer = null;
     let countdownInterval = null;
     let timeLeft = 30;
+    let voiceEnabled = false;
+
+    function enableVoice() {
+      voiceEnabled = true;
+      speechSynthesis.speak(new SpeechSynthesisUtterance("Voice enabled"));
+      document.getElementById('enable-voice-btn').style.display = 'none';
+    }
 
     function say(text) {
       console.log("Speaking:", text);
+      if (!voiceEnabled) return;
+      speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.onend = () => {
         recognition.start();
